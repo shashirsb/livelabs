@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Oracle MyFood</title>
+  <meta charset="UTF-8"> 
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+  <script src="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.js"></script>
+  <link href="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.css" rel="stylesheet" />
+ 
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Karma">  
+  
+  <style>
+    body,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      font-family: "Karma", sans-serif
+    }
+
+    .w3-bar-block .w3-bar-item {
+      padding: 20px
+    }
+
+    .card {
+      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+      max-width: 300px;
+      margin: auto;
+      text-align: center;
+      font-family: arial;
+    }
+
+    .price {
+      color: grey;
+      font-size: 22px;
+    }
+
+    .card button {
+      border: none;
+      outline: 0;
+      padding: 12px;
+      color: white;
+      background-color: #000;
+      text-align: center;
+      cursor: pointer;
+      width: 100%;
+      font-size: 18px;
+    }
+
+    .card button:hover {
+      opacity: 0.7;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    h1 {
+      font-size: 1.5em;
+      color: #222;
+    }
+
+    h2 {
+      font-size: 2.9em;
+    }
+
+    h3 {
+      font-size: 1.2em;
+      font-weight: 300;
+      line-height: 2em;
+    }
+
+    p {
+      font-size: .7em;
+      color: #666;
+      line-height: 1.2em;
+    }
+
+    #top,
+    #mid,
+    #bot {
+      /* Targets all id with 'col-' */
+      border-bottom: 1px solid #EEE;
+    }
+
+    #top {
+      min-height: 100px;
+    }
+
+    #mid {
+      min-height: 80px;
+    }
+
+    #bot {
+      min-height: 50px;
+    }
+
+    #top .logo {
+      height: 60px;
+      width: 60px;
+      background: url(http://michaeltruong.ca/images/logo1.png) no-repeat;
+      background-size: 60px 60px;
+    }
+
+    .clientlogo {
+      float: left;
+      height: 60px;
+      width: 60px;
+      background: url(http://michaeltruong.ca/images/client.jpg) no-repeat;
+      background-size: 60px 60px;
+      border-radius: 50px;
+    }
+
+    .info {
+      display: block;
+
+      margin-left: 0;
+    }
+
+    .title {
+      float: right;
+    }
+
+    .title p {
+      text-align: right;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    td {}
+
+    .tabletitle {
+      font-size: .5em;
+      background: #EEE;
+    }
+
+    .service {
+      border-bottom: 1px solid #EEE;
+    }
+
+    .item {
+      width: 24mm;
+    }
+
+    .itemtext {
+      font-size: 1.0em;
+    }
+
+    #legalcopy {
+      margin-top: 5mm;
+    }
+
+
+
+    /* Create two unequal columns that floats next to each other */
+    .column {
+      float: left;
+      padding: 10px;
+      min-height: 150px;
+      /* Should be removed. Only for demonstration */
+    }
+
+    .left {
+      width: 80%;
+    }
+
+    .right {
+      width: 20%;
+    }
+
+    .left-suggest {
+      width: 35%;
+    }
+
+    .right-suggest {
+      width: 65%;
+    }
+
+    /* Clear floats after the columns */
+    .row:after {
+      content: "";
+      display: table;
+      clear: both;
+    }
+
+
+    .mybutton {
+      border: none;
+      color: white;
+      padding: 15px 32px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      margin: 4px 2px;
+      cursor: pointer;
+      width: 100%;
+      font-weight: 900;
+    }
+
+    .button1 {
+      background-color: #4CAF50;
+    }
+
+    #info {
+      display: block;
+      position: relative;
+      margin: 0px auto;
+      width: 50%;
+      padding: 10px;
+      border: none;
+      border-radius: 3px;
+      font-size: 12px;
+      text-align: center;
+      color: #222;
+      background: #fff;
+    }
+
+    #map {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 80%;
+   
+    }
+
+    .card {
+      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+      padding: 8px;
+      text-align: left;
+      background-color: #f1f1f1;
+    }
+
+    .solid {
+      border-style: dashed;
+      border-color: rgba(102, 102, 102, 0.27);
+      margin-top: 25px;
+    }
+
+    /* Green */
+  </style>
+</head>
+
+<body onload="myFunction()">
+
+  <!-- Sidebar (hidden by default) -->
+  <nav class="w3-sidebar w3-bar-block w3-card w3-top w3-xlarge w3-animate-left"
+    style="display:none;z-index:2;width:40%;min-width:300px" id="mySidebar">
+    <a href="javascript:void(0)" onclick="w3_close()" class="w3-bar-item w3-button">Close Menu</a>
+    <a href="#food" onclick="w3_close()" class="w3-bar-item w3-button">Food</a>
+    <a href="#about" onclick="w3_close()" class="w3-bar-item w3-button">About</a>
+  </nav>
+
+
+
+
+
+  <!-- Top menu -->
+  <div class="w3-top">
+    <div class="w3-white w3-xlarge" style="max-width:1200px;margin:auto">
+
+      <div class="w3-center w3-padding-16">
+        <img src="  https://i.pinimg.com/originals/08/ed/5e/08ed5e21ba68fda78747257e5aa4bb70.png"
+          style="width:5%;height:5%">
+        MyFoods
+      </div>
+    </div>
+  </div>
+
+
+  <!-- !PAGE 2 CONTENT! -->
+  <div id="page2" class="w3-main w3-content " style="max-width:1200px;margin-top:100px">
+
+    <div class="row">
+      <div class="column left">
+
+
+       
+            <div id="map"></div>
+      
+
+
+
+      </div>
+
+      <div class="column right">
+
+        <!--Start ML suggestion-->
+
+
+
+        <div id="spatial">
+
+          <h4 style="color:#c64533"> Selected pick up point</h4>
+
+          <div class="row">
+            <div class="column left-suggest">
+              <img src="./images/marker.png" alt="Cherries" style="width:75%">
+            </div>
+            <div class="column right-suggest">
+              23 main, collbrook UB7BD
+            </div>
+          </div>
+        </div>
+
+
+      </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <!-- End page content -->
+  </div>
+
+
+
+  <script>
+    // Script to open and close sidebar
+    var map = new maplibregl.Map({
+      container: 'map', // container id
+      style:
+        'https://api.maptiler.com/maps/streets/style.json?key=get_your_own_OpIi9ZULNHzrESv6T2vL',
+      center: [78.84879938607014, 23.918202560781793], // starting position
+      zoom: 15 // starting zoom
+    });
+
+
+    function w3_open() {
+      document.getElementById("mySidebar").style.display = "block";
+    }
+
+    function w3_close() {
+      document.getElementById("mySidebar").style.display = "none";
+    }
+
+    function myFunction() {
+      const page1 = document.getElementById('page1');
+      page1.style.display = 'block';
+      // page1.scrollIntoView();
+
+      document.getElementById('page2').style.display = 'none';
+      document.getElementById('ml-suggest').style.display = 'none';
+      document.getElementById('page1-panel-right').style.display = 'block';
+
+
+
+    }
+
+    var globalJsonObject = "{ \"items\": [] }";
+    var _count = 1;
+
+    function addToCart(_food, _value) {
+
+
+      // Here we call ML REST API for retrieving the data
+      document.getElementById('ml-suggest').style.display = 'block';
+      document.getElementById('page1-panel-right').style.display = 'none';
+
+      // Receipt Update
+
+      const jsonItemsObject = JSON.parse(globalJsonObject);
+
+      // Increase count for the food item if exists
+
+      const jsonItemsCountArray = jsonItemsObject.items;
+
+      for (let i = 0; i < jsonItemsCountArray.length; i++) {
+        let obj = jsonItemsCountArray[i];
+        if (obj.properties.name == _food) {
+          _count = parseInt(obj.properties.count) + 1;
+          jsonItemsObject['items'].splice(i, 1);
+          console.log(_count);
+        }
+      }
+
+
+      jsonItemsObject['items'].push({ "typ": "item", "properties": { "name": "" + _food + "", "value": "" + _value + "", "count": "" + _count++ + "" } });
+      _count = 1;
+      globalJsonObject = JSON.stringify(jsonItemsObject);
+
+      const jsonItemsArray = jsonItemsObject.items;
+
+      var table = "<table><tr class=tabletitle><td><h2>Item</h2><td class=Hours><h2>Qty</h2><td class=Rate><h2>Sub Total</h2></td></tr>";
+      let total = 0;
+      for (let i = 0; i < jsonItemsArray.length; i++) {
+        let obj = jsonItemsArray[i];
+
+
+        // console.log(obj.properties.name);
+        // console.log(obj.properties.value);
+        // console.log(obj.properties.count);
+        total += obj.properties.value * obj.properties.count;
+
+        //var rowData = "<tr style=padding:25px;><td>" + obj.properties.ogr_fid + "</td><td>" + obj.properties.distance_m + "</td></tr>";
+        var rowData = "<tr class=service><td class=tableitem><p class=itemtext>" + obj.properties.name + "<td class=tableitem><p class=itemtext>" + obj.properties.count + "<td class=tableitem><p class=itemtext>$" + obj.properties.value + "</td></tr>";
+        table += rowData;
+      }
+      document.getElementById("receipt-table").innerHTML = table + "<tr class=tabletitle><td><td class=Rate><h2>Total</h2><td class=payment><h2>$" + total.toFixed(2) + "</h2></td></tr></table>";
+      document.getElementById("page2-receipt-table").innerHTML = table + "<tr class=tabletitle><td><td class=Rate><h2>Total</h2><td class=payment><h2>$" + total.toFixed(2) + "</h2></td></tr></table>";
+
+
+
+    }
+
+    
+    map.on('click', function (e) {
+
+      if (map.getSource('roadlines') != null) {
+        map.removeLayer('road');
+        map.removeLayer('point');
+        map.removeSource('roadlines');
+        map.removeImage('marker');
+      }
+
+
+
+
+
+    
+
+
+      /// For rest call
+
+      // var ItemJSON;
+
+      // ItemJSON = '[  {    "Id": 1,    "ProductID": "1",    "Quantity": 1,  },  {    "Id": 1,    "ProductID": "2",    "Quantity": 2,  }]';
+      // var lat = "23.890178904023145";
+      // var lng = "79.05081176757744";
+      var _latLong = e.lngLat.wrap();
+      var lat = _latLong.lat;
+      var lng = _latLong.lng;
+      let dist = "100";
+      // var dist = "5000";
+      //URL = "https://n7djxxqbnkflnvn-nqtwc4f2h64vmsb7.adb.us-ashburn-1.oraclecloudapps.com/ords/admin/findGeom/findRoads/" + lng + "/" + lat + "/" + dist
+      URL = "https://api.github.com/users/hadley/orgs"
+
+
+
+      const xhr = new XMLHttpRequest();
+
+      xhr.open('GET', URL);
+
+      // set response format
+      xhr.responseType = 'json';
+
+      xhr.send();
+
+      xhr.onload = () => {
+        // get JSON response
+        ///const geoJSONData = xhr.response;
+        ///var strgeojson = JSON.stringify(geoJSONData);
+
+        const geoJSONData = "{ \"type\": \"FeatureCollection\", \"features\": [{ \"type\": \"Feature\", \"properties\": { \"ogr_fid\": \"23 main, collbrook UB7BD\", \"rd_cls\": \"Kerbana\", \"distance_m\": \"168.886494476744\", \"marker-color\": \"\" }, \"geometry\": { \"type\": \"Point\", \"coordinates\": [78.84889, 23.91668, 0] } }, { \"type\": \"Feature\", \"properties\": { \"ogr_fid\": \"11 cross road, uxbridge highway UB8ID\", \"rd_cls\": \"Kerbana\", \"distance_m\": \"306.397703449732\", \"marker-color\": \"\" }, \"geometry\": { \"type\": \"Point\", \"coordinates\": [78.84949, 23.91551, 0] } }, { \"type\": \"Feature\", \"properties\": { \"ogr_fid\": \"4 Greater Avenue, Springsfield, Uxbridge, UB843D\", \"rd_cls\": \"\", \"distance_m\": \"312\", \"marker-color\": \"#931010\" }, \"geometry\": { \"type\": \"Point\", \"coordinates\": [78.84879938607014, 23.918202560781793, 0] } }] }";
+        var strgeojson = JSON.stringify({ "type": "FeatureCollection", "features": [{ "type": "Feature", "properties": { "ogr_fid": "23 main, collbrook UB7BD", "rd_cls": "Kerbana", "distance_m": "168.886494476744", "marker-color": "" }, "geometry": { "type": "Point", "coordinates": [78.84889, 23.91668, 0] } }, { "type": "Feature", "properties": { "ogr_fid": "11 cross road, uxbridge highway UB8ID", "rd_cls": "Kerbana", "distance_m": "306.397703449732", "marker-color": "" }, "geometry": { "type": "Point", "coordinates": [78.84949, 23.91551, 0] } }, { "type": "Feature", "properties": { "ogr_fid": "4 Greater Avenue, Springsfield, Uxbridge, UB843D", "rd_cls": "", "distance_m": "312", "marker-color": "#931010" }, "geometry": { "type": "Point", "coordinates": [78.84879938607014, 23.918202560781793, 0] } }] });
+
+        new maplibregl.Popup()
+          .setLngLat(e.lngLat)
+          .setHTML('<img src="./images/blueicon.png">')
+          .addTo(map);
+
+
+        map.loadImage(
+          './images/marker.png',
+          function (error, image) {
+            if (error) throw error;
+            map.addImage('marker', image);
+
+
+            map.addSource('roadlines', {
+              type: 'geojson',
+              data: geoJSONData
+            });
+
+        
+            map.addLayer({
+              'id': 'point',
+              'type': 'symbol',
+              'source': 'roadlines',
+              'layout': {
+                'icon-image': 'marker',
+                'icon-size': 0.05
+              }
+            });
+          }
+        );
+
+        //Table view
+
+        // var jsonStr = '{"type":"FeatureCollection","features":[{"type":"Feature","properties":{"ogr_fid":"5966","rd_cls":"Unclassified","distance_m":"141.627899475866","marker-color":""},"geometry":{"type":"MultiLineString","coordinates":[]}},{"type":"Feature","properties":{"ogr_fid":"6037","rd_cls":"Unclassified","distance_m":"235.379325712932","marker-color":""},"geometry":{"type":"MultiLineString","coordinates":[]}},{"type":"Feature","properties":{"ogr_fid":"5965","rd_cls":"Unclassified","distance_m":"475.76202634029","marker-color":""},"geometry":{"type":"MultiLineString","coordinates":[]}},{"type":"Feature","properties":{"ogr_fid":"1152","rd_cls":"Kerbana","distance_m":"442.634666054122","marker-color":""},"geometry":{"type":"Point","coordinates":[]}},{"type":"Feature","properties":{"ogr_fid":"1021","rd_cls":"Kerbana","distance_m":"843.367785692684","marker-color":""},"geometry":{"type":"Point","coordinates":[]}},{"type":"Feature","properties":{"ogr_fid":"1166","rd_cls":"Kerbana","distance_m":"965.519922623643","marker-color":""},"geometry":{"type":"Point","coordinates":[]}},{"type":"Feature","properties":{"ogr_fid":"1028","rd_cls":"Kerbana","distance_m":"996.601984119361","marker-color":""},"geometry":{"type":"Point","coordinates":[]}},{"type":"Feature","properties":{"ogr_fid":"","rd_cls":"","distance_m":"","marker-color":"#931010"},"geometry":{"type":"Point","coordinates":[]}}]}';
+        console.log("Json String is " + strgeojson)
+        const jsonObject = JSON.parse(strgeojson);
+        const jsonArray = jsonObject.features;
+        // console.log("Welcome to Programiz!" +jsonArray);
+        var table = "<table> Please select your pick up address<br>";
+
+
+
+        for (let i = 0; i < jsonArray.length; i++) {
+          let obj = jsonArray[i];
+
+          console.log(obj.properties.ogr_fid);
+
+          console.log(obj.properties.distance_m);
+          //var rowData = "<tr style=padding:25px;><td>" + obj.properties.ogr_fid + "</td><td>" + obj.properties.distance_m + "</td></tr>";
+          var rowData = "<br> <div class=card> <input type=radio id=" + i + "><label> <b>MyFoods</b> <br>" + obj.properties.ogr_fid + "   <br>  " + Math.round(obj.properties.distance_m) + " meter </label></div>";
+          // Store the value in 'table'
+          table += rowData;
+        }
+        document.getElementById("right-spatial").innerHTML = "<form>" + table + "</form></table>";
+
+
+      }
+
+    });
+
+
+    function selectPickUp() {
+
+      const page2 = document.getElementById('page2');
+      page2.style.display = 'block';
+      // page2.scrollIntoView();
+
+      document.getElementById('page1').style.display = 'none';
+    }
+
+
+
+
+
+
+
+
+  </script>
+
+</body>
+
+</html>

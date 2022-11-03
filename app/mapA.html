@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Get coordinates of the mouse pointer</title>
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+    <script src="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.js"></script>
+    <link href="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.css" rel="stylesheet" />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+        }
+
+        /* .mapboxgl-popup-content, .maplibregl-popup-content {
+            background-image: url("http://150.136.13.56/bluemark.png");
+            background-repeat: no-repeat;
+            background-size: 20% 20%;
+
+} */
+    </style>
+</head>
+
+<body>
+    <style type="text/css">
+        #info {
+            display: block;
+            position: relative;
+            margin: 0px auto;
+            width: 50%;
+            padding: 10px;
+            border: none;
+            border-radius: 3px;
+            font-size: 12px;
+            text-align: center;
+            color: #222;
+            background: #fff;
+        }
+    </style>
+    <div id="map"></div>
+    <pre id="info"></pre>
+    <script>
+        var map = new maplibregl.Map({
+            container: 'map', // container id
+            style:
+                'https://api.maptiler.com/maps/streets/style.json?key=get_your_own_OpIi9ZULNHzrESv6T2vL',
+            center: [78.84879938607014, 23.918202560781793], // starting position
+            zoom: 15 // starting zoom
+        });
+
+
+        map.on('click', function (e) {
+
+            if (map.getSource('roadlines') != null) {
+                map.removeLayer('road');
+                map.removeLayer('point');
+                map.removeSource('roadlines');
+                map.removeImage('marker');
+            }
+
+
+
+
+
+            document.getElementById('info').innerHTML =
+
+                // e.point is the x, y coordinates of the mousemove event relative
+                // to the top-left corner of the map
+                JSON.stringify(e.point) +
+                '<br />' +
+                // e.lngLat is the longitude, latitude geographical position of the event
+                JSON.stringify(e.lngLat.wrap());
+
+
+            /// For rest call
+
+            // var ItemJSON;
+
+            // ItemJSON = '[  {    "Id": 1,    "ProductID": "1",    "Quantity": 1,  },  {    "Id": 1,    "ProductID": "2",    "Quantity": 2,  }]';
+            // var lat = "23.890178904023145";
+            // var lng = "79.05081176757744";
+            var _latLong = e.lngLat.wrap();
+            var lat = _latLong.lat;
+            var lng = _latLong.lng;
+            let dist = prompt("Please enter your distance", "100");
+            // var dist = "5000";
+            URL = "https://n7djxxqbnkflnvn-nqtwc4f2h64vmsb7.adb.us-ashburn-1.oraclecloudapps.com/ords/admin/findGeom/findRoads/" + lng + "/" + lat + "/" + dist
+
+
+
+
+            const xhr = new XMLHttpRequest();
+
+            xhr.open('GET', URL);
+
+            // set response format
+            xhr.responseType = 'json';
+
+            xhr.send();
+
+            xhr.onload = () => {
+                // get JSON response
+                const geoJSONData = xhr.response;
+                var strgeojson = JSON.stringify(geoJSONData);
+                new maplibregl.Popup()
+                    .setLngLat(e.lngLat)
+                    .setHTML('<img src="http://150.136.13.56/blueicon.png">')
+                    .addTo(map);
+
+
+                map.loadImage(
+                    'http://150.136.13.56/marker.png',
+                    function (error, image) {
+                        if (error) throw error;
+                        map.addImage('marker', image);
+
+                        // log details
+                        // console.log(user.name); // John Doe
+                        // console.log(user.email); // john.doe@example.com
+                        // console.log(user.website); // http://example.com
+
+                        map.addSource('roadlines', {
+                            type: 'geojson',
+                            data: geoJSONData
+                        });
+
+                        map.addLayer({
+                            'id': 'road',
+                            'type': 'line',
+                            'source': 'roadlines'
+                        });
+                        map.addLayer({
+                            'id': 'point',
+                            'type': 'symbol',
+                            'source': 'roadlines',
+                            'layout': {
+                                'icon-image': 'marker',
+                                'icon-size': 0.05
+                            }
+                        });
+                    }
+                );
+            }
+
+
+        });
+    </script>
+
+</body>
+
+</html>
