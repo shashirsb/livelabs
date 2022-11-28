@@ -555,10 +555,12 @@
             </center>
           </div>
 
-          <button id="ml-suggest-btn" class="mybutton button1" onclick="page2Function()">SELECT RESTAURANT</button>
-
+        
 
         </div>
+
+        <button id="ml-suggest-btn" class="mybutton button1" onclick="page2Function()">SELECT RESTAURANT</button>
+
 
 
         <!--End ML suggestion-->
@@ -889,6 +891,9 @@
     var orderspan = document.getElementById("orderClose");
 
 
+    function delay(time) {
+  return new Promise(resolve => setTimeout(resolve, time));
+}
 
     // When the user clicks the button, open the modal 
     btn.onclick = function () {
@@ -1085,7 +1090,7 @@
 
 
       // Here we call ML REST API for retrieving the data
-      document.getElementById('ml-suggest').style.display = 'block';
+      
       document.getElementById('page1-panel-right').style.display = 'none';
       document.getElementById('page2-panel-right').style.display = 'none';
 
@@ -1150,6 +1155,8 @@
         console.log(geoJSONData.items.length);
 
         if (geoJSONData.items.length > 0) {
+          document.getElementById('ml-suggest').style.display = 'block';
+          // delay(3000).then(() => console.log('ran after 1 second1 passed'));
           
           var recomm = geoJSONData.items[0].recommendation.toLowerCase();
           var recomm_price;
@@ -1191,7 +1198,7 @@
           var myMLContent = '<h4 style="color:#c64533"> You may also like </h4><div class="column left-suggest"><img src="./images/' + recomm + '.jpg" alt="' + recomm + '" style="width:75%""></div><div class="column right-suggest"><h1>' + recomm + '</h1><h5>$' + recomm_price + '</h5><p><button class="mybutton cartML" onclick=addToCartML(\"' + recomm + '\",1.99)>Add</button></p></div>';
           document.getElementById("mlcontent").innerHTML = myMLContent;
         } else {
-          var myMLContent = '<div class="column left-suggest"></div><div class="column right-suggest"><h1>No recommendation from ML</h1><h5>$0.00</h5></div>';
+          var myMLContent = '<h4 style="color:#c64533"> Select your favorite food and order </h4>';
           document.getElementById("mlcontent").innerHTML = myMLContent;
         }
 
