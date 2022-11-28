@@ -1000,6 +1000,14 @@
       card = document.getElementById("card").value;
       console.log(card);
 
+      URL = "https://rddainsuh6u1okc-jsondb.adb.us-ashburn-1.oraclecloudapps.com/ords/admin/api/frontend?phone="+phone+"&name="+fname+"&location="+address+"&card="+card;
+
+
+      const xhr = new XMLHttpRequest();
+      xhr.open('PUT', URL);
+  
+      xhr.send(orderobj);
+
       console.log(restaurant_id);
       console.log(restaurant_address);
       console.log(restaurant_latlng);
