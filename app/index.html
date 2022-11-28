@@ -555,7 +555,7 @@
             </center>
           </div>
 
-          <button class="mybutton button1" onclick="page2Function()">SELECT RESTAURANT</button>
+          <button id="ml-suggest-btn" class="mybutton button1" onclick="page2Function()">SELECT RESTAURANT</button>
 
 
         </div>
@@ -1142,7 +1142,7 @@
         console.log(geoJSONData.items.length);
 
         if (geoJSONData.items.length > 0) {
-
+          
           var recomm = geoJSONData.items[0].recommendation.toLowerCase();
           var recomm_price;
           if (recomm == 'coke') {
