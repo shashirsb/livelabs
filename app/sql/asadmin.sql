@@ -50,3 +50,7 @@ CREATE INDEX "OUSER"."SPIDX_ONLINE_S"
 --
 grant execute on get_geometry to ouser;
 grant execute on sgtech_ptf to ouser;
+
+-- 
+
+connect ouser/MyDB__12345678

@@ -1,3 +1,5 @@
+-- This needs to run as OADMINUSER
+
 -- DEFINE HANDLER
 BEGIN
     ORDS.DEFINE_HANDLER(
